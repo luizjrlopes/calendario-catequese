@@ -149,5 +149,84 @@ td:hover {
   }
   body {
     padding: 0;
+    margin: 0;
   }
+}
+
+/* Estilos para impressão do calendário completo */
+.impressao {
+  font-family: Arial, sans-serif;
+}
+
+.grade-calendarios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.mes {
+  border: 1px solid #ccc;
+}
+
+.mes-cabecalho {
+  background: #d30000;
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  padding: 4px;
+  font-size: 14px;
+}
+
+.mes-tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mes-tabela th,
+.mes-tabela td {
+  border: 1px solid #ccc;
+  width: 14.28%;
+  text-align: center;
+}
+
+.mes-tabela th {
+  background: #999;
+  color: #fff;
+  padding: 2px 0;
+  font-weight: normal;
+  font-size: 12px;
+}
+
+.mes-tabela th.domingo {
+  background: #d30000;
+}
+
+.mes-tabela td {
+  height: 24px;
+  font-size: 12px;
+}
+
+.dia-destaque {
+  color: #d30000;
+}
+
+.legenda-eventos {
+  margin-top: 20px;
+  font-size: 12px;
+}
+
+.legenda-eventos ul {
+  list-style: none;
+  padding: 0;
+}
+
+.dia-legenda {
+  color: #d30000;
+  font-weight: bold;
+}
+
+@page {
+  size: A4 landscape;
+  margin: 10mm;
 }
