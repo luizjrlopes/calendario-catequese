@@ -1,0 +1,120 @@
+.print-wrapper {
+  font-family: sans-serif;
+}
+
+.pagina-calendarios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  page-break-after: always;
+}
+
+.calendario-print {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mes-header {
+  background: #b30000;
+  color: #fff;
+  text-align: center;
+  padding: 0.2rem 0;
+}
+
+.mes-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.mes-header .ano {
+  font-weight: normal;
+}
+
+.mes-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  flex: 1;
+}
+
+.mes-tabela th,
+.mes-tabela td {
+  border: 1px solid #999;
+  width: calc(100% / 7);
+  height: 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.mes-tabela th {
+  background: #f2f2f2;
+  font-weight: normal;
+}
+
+.mes-tabela th.domingo {
+  background: #b30000;
+  color: #fff;
+}
+
+.mes-tabela td.domingo {
+  color: #b30000;
+}
+
+.mes-tabela td.has-evento {
+  color: #b30000;
+  font-weight: bold;
+}
+
+.mes-tabela .fase-lua {
+  display: block;
+  font-size: 0.6rem;
+  line-height: 1;
+}
+
+.lista-eventos {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+  font-size: 0.7rem;
+}
+
+.lista-eventos li {
+  margin-bottom: 0.2rem;
+}
+
+.lista-eventos .dia {
+  color: #b30000;
+  font-weight: bold;
+  margin-right: 0.3rem;
+}
+
+.fases-lua {
+  margin-top: auto;
+  font-size: 0.6rem;
+}
+
+.fase-item {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.fase-item .dia {
+  color: #b30000;
+  font-weight: bold;
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .pagina-calendarios {
+    gap: 0;
+  }
+}
