@@ -52,13 +52,13 @@ Subtítulos menores e indentados
 🌙 Fases da Lua
 Exibir símbolos e datas no rodapé:
 
-◯ (Crescente), ● (Cheia), ◑ (Minguante), ○ (Nova)
+◯ (Crescente), ● (Cheia), ◑ (Minguante), 🌑 (Nova)
 
 Exemplo:
 
 Copiar
 Editar
-◯ 01/31 CRESC   ● 09 CHEIA   ◑ 16 MING   ○ 23 NOVA
+◯ 01/31 CRESC   ● 09 CHEIA   ◑ 16 MING   🌑 23 NOVA
 🖨️ Layout para Impressão
 Página A4 (formato paisagem)
 Três colunas por folha (1 mês por coluna)
