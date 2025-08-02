@@ -1,6 +1,6 @@
-//calendario.jsx
+// src/components/Calendar/index.jsx
 import React, { useEffect, useState } from 'react';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import {
   collection,
   query,
@@ -11,22 +11,25 @@ import {
   doc,
   updateDoc
 } from 'firebase/firestore';
-
+import * as S from './../../styles/calendar';
 
 const MESES = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro'
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
+
+// Função segura para extrair ano, mês, dia de uma string 'YYYY-MM-DD'
+const getDataParts = (dataStr) => {
+  if (!dataStr) return {};
+  const [ano, mes, dia] = dataStr.split('-').map(Number);
+  return { ano, mes, dia };
+};
+
+const formatarData = (data) => {
+  const [ano, mes, dia] = data.split('-');
+  if (!ano || !mes || !dia) return 'Data inválida';
+  return `${dia}/${mes}/${ano}`;
+};
 
 function Calendar() {
   const [dataAtual, setDataAtual] = useState(new Date());
@@ -38,6 +41,7 @@ function Calendar() {
   const ano = dataAtual.getFullYear();
   const mes = dataAtual.getMonth();
 
+  // Carregar eventos do mês/ano atual
   const carregarEventos = async () => {
     const q = query(
       collection(db, 'eventos'),
@@ -45,7 +49,10 @@ function Calendar() {
       where('ano', '==', ano)
     );
     const snapshot = await getDocs(q);
-    const data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const data = snapshot.docs.map((d) => ({
+      id: d.id,
+      ...d.data()
+    }));
     setEventos(data);
   };
 
@@ -53,6 +60,7 @@ function Calendar() {
     carregarEventos();
   }, [mes, ano]);
 
+  // Gerar grade de semanas/dias do mês atual
   const diasNoMes = new Date(ano, mes + 1, 0).getDate();
   const primeiroDia = new Date(ano, mes, 1).getDay();
   const semanas = [];
@@ -69,27 +77,42 @@ function Calendar() {
     semanas.push(semana);
   }
 
+  // Eventos agrupados por dia do mês
   const eventosPorDia = eventos.reduce((acc, ev) => {
     acc[ev.dia] = acc[ev.dia] ? [...acc[ev.dia], ev] : [ev];
     return acc;
   }, {});
 
+  // Agrupamento por data string para listagem
+  const datasAgrupadas = eventos.reduce((acc, ev) => {
+    if (!ev.data) return acc;
+    acc[ev.data] = acc[ev.data] ? [...acc[ev.data], ev] : [ev];
+    return acc;
+  }, {});
+  const datasOrdenadas = Object.keys(datasAgrupadas).sort();
+
+  // Adicionar novo evento sem erro de fuso!
   const handleAdd = async (e) => {
     e.preventDefault();
-    if (!dataEvento || !descricao) return;
-    const d = new Date(dataEvento);
+    if (!dataEvento || !descricao) return;   
+
+    const { ano, mes, dia } = getDataParts(dataEvento);
+    const dataPadrao = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
     await addDoc(collection(db, 'eventos'), {
-      data: dataEvento,
-      dia: d.getDate(),
-      mes: d.getMonth() + 1,
-      ano: d.getFullYear(),
-      descricao
+      data: dataPadrao,
+      dia,
+      mes,
+      ano,
+      descricao: descricao.trim()
     });
+    
+
     setDataEvento('');
     setDescricao('');
     carregarEventos();
   };
 
+  // Abrir modal para o dia selecionado
   const abrirModal = (dia) => {
     const data = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
     setDataModal(data);
@@ -97,6 +120,7 @@ function Calendar() {
 
   const fecharModal = () => setDataModal(null);
 
+  // Remover evento
   const removerEvento = async (id) => {
     if (window.confirm('Remover evento?')) {
       await deleteDoc(doc(db, 'eventos', id));
@@ -104,6 +128,7 @@ function Calendar() {
     }
   };
 
+  // Editar descrição do evento
   const editarEvento = async (ev) => {
     const nova = window.prompt('Nova descrição', ev.descricao);
     if (nova && nova.trim()) {
@@ -112,6 +137,7 @@ function Calendar() {
     }
   };
 
+  // Exportar CSV
   const exportarCSV = () => {
     const linhas = [
       ['data', 'descricao'],
@@ -127,32 +153,18 @@ function Calendar() {
     URL.revokeObjectURL(url);
   };
 
-  const datasAgrupadas = eventos.reduce((acc, ev) => {
-    acc[ev.data] = acc[ev.data] ? [...acc[ev.data], ev] : [ev];
-    return acc;
-  }, {});
-  const datasOrdenadas = Object.keys(datasAgrupadas).sort();
-
   return (
-    <div className="calendario">
-      <div className="header">
-        <button onClick={() => setDataAtual(new Date(ano, mes - 1, 1))}>&lt;</button>
-        <h2>
-          {MESES[mes]} {ano}
-        </h2>
-        <button onClick={() => setDataAtual(new Date(ano, mes + 1, 1))}>&gt;</button>
-      </div>
+    <S.Container>
+      <S.Header>
+        <S.NavButton onClick={() => setDataAtual(new Date(ano, mes - 1, 1))}>&lt;</S.NavButton>
+        <h2>{MESES[mes]} {ano}</h2>
+        <S.NavButton onClick={() => setDataAtual(new Date(ano, mes + 1, 1))}>&gt;</S.NavButton>
+      </S.Header>
 
-      <table>
+      <S.Table>
         <thead>
           <tr>
-            <th>D</th>
-            <th>S</th>
-            <th>T</th>
-            <th>Q</th>
-            <th>Q</th>
-            <th>S</th>
-            <th>S</th>
+            {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((d, i) => <th key={i}>{d}</th>)}
           </tr>
         </thead>
         <tbody>
@@ -165,40 +177,29 @@ function Calendar() {
                   onClick={() => dia && abrirModal(dia)}
                 >
                   {dia}
-                  {dia && eventosPorDia[dia] && <span className="dot" />}
+                  {dia && eventosPorDia[dia] && <S.Dot />}
                 </td>
               ))}
             </tr>
           ))}
         </tbody>
-      </table>
+      </S.Table>
 
-      <form onSubmit={handleAdd} className="form-event">
-        <input
-          type="date"
-          value={dataEvento}
-          onChange={(e) => setDataEvento(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
-          placeholder="Descrição"
-          required
-        />
+      <S.FormEvent onSubmit={handleAdd}>
+        <input type="date" value={dataEvento} onChange={(e) => setDataEvento(e.target.value)} required />
+        <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descrição" required />
         <button type="submit">Salvar</button>
-      </form>
+      </S.FormEvent>
 
-      <div className="acoes">
+      <S.Acoes>
         <button onClick={() => window.print()}>Imprimir calendário</button>
         <button onClick={exportarCSV}>Exportar CSV</button>
-      </div>
+      </S.Acoes>
 
-      <ul className="eventos">
+      <S.EventList>
         {datasOrdenadas.map((data) => (
           <li key={data}>
-            <strong>{new Date(data).toLocaleDateString('pt-BR')}</strong>
+            <strong>{formatarData(data)}</strong>
             <ul>
               {datasAgrupadas[data].map((ev) => (
                 <li key={ev.id}>{ev.descricao}</li>
@@ -206,26 +207,28 @@ function Calendar() {
             </ul>
           </li>
         ))}
-      </ul>
+      </S.EventList>
 
       {dataModal && (
-        <div className="modal-overlay" onClick={fecharModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>{new Date(dataModal).toLocaleDateString('pt-BR')}</h3>
-            <ul>
-              {(datasAgrupadas[dataModal] || []).map((ev) => (
-                <li key={ev.id}>
-                  {ev.descricao}{' '}
-                  <button onClick={() => editarEvento(ev)}>Editar</button>{' '}
-                  <button onClick={() => removerEvento(ev.id)}>Remover</button>
-                </li>
-              ))}
-            </ul>
+        <S.ModalOverlay onClick={fecharModal}>
+          <S.Modal onClick={(e) => e.stopPropagation()}>
+          <h3>{formatarData(dataModal)}</h3>
+
+       <ul>
+  {(datasAgrupadas[dataModal] || []).map((ev) => (
+    <li key={ev.id}>
+      {ev.descricao}{' '}
+      <button onClick={() => editarEvento(ev)}>Editar</button>{' '}
+      <button onClick={() => removerEvento(ev.id)}>Remover</button>
+    </li>
+  ))}
+</ul>
+
             <button onClick={fecharModal}>Fechar</button>
-          </div>
-        </div>
+          </S.Modal>
+        </S.ModalOverlay>
       )}
-    </div>
+    </S.Container>
   );
 }
 

@@ -1,8 +1,8 @@
 // Impressao.jsx
 import React, { useEffect, useState } from 'react';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import './styles.css';
+import * as S from './../../styles/impressao';
 
 const MESES = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -57,12 +57,12 @@ function Impressao() {
       .flatMap(([data, descricoes]) => descricoes.map((desc) => ({ data, desc })));
 
     return (
-      <div className="calendario-impressao">
-        <div className="cabecalho-mes">
+      <S.CalendarioImpressao key={mes}>
+        <S.CabecalhoMes>
           <span>{mesNome.toUpperCase()}</span>
           <span>{ano}</span>
-        </div>
-        <table className="tabela-mes">
+        </S.CabecalhoMes>
+        <S.TabelaMes>
           <thead>
             <tr>
               {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((d, i) => (
@@ -84,28 +84,28 @@ function Impressao() {
               </tr>
             ))}
           </tbody>
-        </table>
-        <ul className="eventos-lista">
+        </S.TabelaMes>
+        <S.EventosLista>
           {eventosDoMes.map((ev, i) => (
             <li key={i}>
               <span className="data-evento">{ev.data.slice(8, 10)}</span> - {ev.desc}
             </li>
           ))}
-        </ul>
-        <div className="fases-lua">
+        </S.EventosLista>
+        <S.FasesLua>
           <span>◯ 01/31 CRESC</span>
           <span>◯ 09 CHEIA</span>
           <span>● 16 MING</span>
           <span>○ 23 NOVA</span>
-        </div>
-      </div>
+        </S.FasesLua>
+      </S.CalendarioImpressao>
     );
   };
 
   return (
-    <div className="folha-impressao">
+    <S.FolhaImpressao>
       {[...Array(12).keys()].map((mes) => renderCalendario(mes))}
-    </div>
+    </S.FolhaImpressao>
   );
 }
 
