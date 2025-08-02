@@ -1,20 +1,12 @@
+// Impressao.jsx
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import './styles.css';
 
 const MESES = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro'
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
 
 function gerarSemanas(ano, mes) {
@@ -22,6 +14,7 @@ function gerarSemanas(ano, mes) {
   const primeiroDia = new Date(ano, mes, 1).getDay();
   const semanas = [];
   let semana = new Array(primeiroDia).fill(null);
+
   for (let dia = 1; dia <= diasNoMes; dia++) {
     semana.push(dia);
     if (semana.length === 7) {
@@ -55,76 +48,63 @@ function Impressao() {
     carregar();
   }, [ano]);
 
-  const listaEventos = Object.entries(eventos)
-    .sort(([a], [b]) => (a > b ? 1 : -1))
-    .flatMap(([data, descs]) => descs.map((d) => ({ data, descricao: d })));
+  const renderCalendario = (mes) => {
+    const semanas = gerarSemanas(ano, mes);
+    const mesNome = MESES[mes];
 
-  return (
-    <div className="impressao">
-      <h1>Calendários para Impressão</h1>
-      <div className="grade-calendarios">
-        {MESES.map((mesNome, indice) => {
-          const semanas = gerarSemanas(ano, indice);
-          return (
-            <div className="mes" key={mesNome}>
-              <div className="mes-cabecalho">
-                <span>{mesNome.toUpperCase()}</span>
-                <span>{ano}</span>
-              </div>
-              <table className="mes-tabela">
-                <thead>
-                  <tr>
-                    <th className="domingo">D</th>
-                    <th>S</th>
-                    <th>T</th>
-                    <th>Q</th>
-                    <th>Q</th>
-                    <th>S</th>
-                    <th>S</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {semanas.map((semana, i) => (
-                    <tr key={i}>
-                      {semana.map((dia, j) => {
-                        if (!dia) return <td key={j}></td>;
-                        const dataKey = `${ano}-${String(indice + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-                        const isDomingo = new Date(ano, indice, dia).getDay() === 0;
-                        const hasEvento = Boolean(eventos[dataKey]);
-                        const classes = [
-                          isDomingo || hasEvento ? 'dia-destaque' : ''
-                        ]
-                          .filter(Boolean)
-                          .join(' ');
-                        return (
-                          <td key={j} className={classes}>
-                            {dia}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          );
-        })}
-      </div>
-      <div className="legenda-eventos">
-        <ul>
-          {listaEventos.map((ev, idx) => (
-            <li key={`${ev.data}-${idx}`}>
-              <span className="dia-legenda">
-                {new Date(ev.data).toLocaleDateString('pt-BR', {
-                  day: '2-digit',
-                  month: '2-digit'
+    const eventosDoMes = Object.entries(eventos)
+      .filter(([data]) => parseInt(data.split('-')[1]) === mes + 1)
+      .flatMap(([data, descricoes]) => descricoes.map((desc) => ({ data, desc })));
+
+    return (
+      <div className="calendario-impressao">
+        <div className="cabecalho-mes">
+          <span>{mesNome.toUpperCase()}</span>
+          <span>{ano}</span>
+        </div>
+        <table className="tabela-mes">
+          <thead>
+            <tr>
+              {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((d, i) => (
+                <th key={i} className={i === 0 ? 'domingo' : ''}>{d}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {semanas.map((sem, i) => (
+              <tr key={i}>
+                {sem.map((dia, j) => {
+                  if (!dia) return <td key={j}></td>;
+                  const key = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                  const hasEvento = !!eventos[key];
+                  const isDomingo = new Date(ano, mes, dia).getDay() === 0;
+                  const classes = [isDomingo || hasEvento ? 'dia-vermelho' : ''].join(' ');
+                  return <td key={j} className={classes}>{dia}</td>;
                 })}
-              </span>{' '}
-              - {ev.descricao}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <ul className="eventos-lista">
+          {eventosDoMes.map((ev, i) => (
+            <li key={i}>
+              <span className="data-evento">{ev.data.slice(8, 10)}</span> - {ev.desc}
             </li>
           ))}
         </ul>
+        <div className="fases-lua">
+          <span>◯ 01/31 CRESC</span>
+          <span>◯ 09 CHEIA</span>
+          <span>● 16 MING</span>
+          <span>○ 23 NOVA</span>
+        </div>
       </div>
+    );
+  };
+
+  return (
+    <div className="folha-impressao">
+      {[...Array(12).keys()].map((mes) => renderCalendario(mes))}
     </div>
   );
 }

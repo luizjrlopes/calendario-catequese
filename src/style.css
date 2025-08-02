@@ -1,3 +1,4 @@
+/* === ESTILOS GERAIS === */
 body {
   font-family: Arial, sans-serif;
   padding: 20px;
@@ -140,6 +141,7 @@ td:hover {
   }
 }
 
+/* === IMPRESSÃO === */
 @media print {
   .form-event,
   .acoes,
@@ -153,7 +155,7 @@ td:hover {
   }
 }
 
-/* Estilos para impressão do calendário completo */
+/* === IMPRESSÃO AVANÇADA === */
 .impressao {
   font-family: Arial, sans-serif;
 }
@@ -174,8 +176,10 @@ td:hover {
   font-weight: bold;
   display: flex;
   justify-content: space-between;
-  padding: 4px;
-  font-size: 14px;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 16px;
+  text-transform: uppercase;
 }
 
 .mes-tabela {
@@ -193,9 +197,9 @@ td:hover {
 .mes-tabela th {
   background: #999;
   color: #fff;
-  padding: 2px 0;
+  padding: 4px 0;
   font-weight: normal;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .mes-tabela th.domingo {
@@ -203,8 +207,9 @@ td:hover {
 }
 
 .mes-tabela td {
-  height: 24px;
-  font-size: 12px;
+  height: 30px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .dia-destaque {
@@ -212,19 +217,49 @@ td:hover {
 }
 
 .legenda-eventos {
-  margin-top: 20px;
+  margin-top: 8px;
   font-size: 12px;
+  page-break-inside: avoid;
 }
 
 .legenda-eventos ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .dia-legenda {
   color: #d30000;
   font-weight: bold;
 }
+
+.fases-lua {
+  display: flex;
+  justify-content: center;
+  font-size: 10px;
+  gap: 16px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.fases-lua span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fases-lua .bolinha {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  background: #000;
+}
+
+.bolinha.cresc { background: #fff; border: 1px solid #000; }
+.bolinha.cheia { background: #000; }
+.bolinha.ming  { background: #000; border: 2px solid #fff; }
+.bolinha.nova  { background: #fff; }
 
 @page {
   size: A4 landscape;
