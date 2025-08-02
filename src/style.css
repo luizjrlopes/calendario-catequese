@@ -230,3 +230,12 @@ td:hover {
   size: A4 landscape;
   margin: 10mm;
 }
+
+@media print {
+  .mes:nth-child(3n) {
+    page-break-after: always;
+  }
+  .mes:last-child {
+    page-break-after: auto;
+  }
+}

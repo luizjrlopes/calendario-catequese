@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { db } from '../firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 const MESES = [
   'Janeiro',
@@ -14,16 +16,6 @@ const MESES = [
   'Novembro',
   'Dezembro'
 ];
-
-const eventos = {
-  '2025-08-05': 'Encontro de Catequistas',
-  '2025-08-08': 'Encontro da Semana da Família (Pais, Catequizandos e Pastoral Familiar)',
-  '2025-08-12': 'Filme: Irmão Sol, Irmã Lua',
-  '2025-08-13': 'Filme: Versão atualizada infantil',
-  '2025-08-14': 'Visita a uma família',
-  '2025-08-24': 'Missa Catequética (Crisma)',
-  '2025-08-31': 'Missa Dia do Catequista'
-};
 
 function gerarSemanas(ano, mes) {
   const diasNoMes = new Date(ano, mes + 1, 0).getDate();
@@ -46,11 +38,26 @@ function gerarSemanas(ano, mes) {
 
 function Impressao() {
   const ano = 2025;
+  const [eventos, setEventos] = useState({});
 
-  const listaEventos = Object.entries(eventos).map(([data, desc]) => ({
-    dia: data.split('-')[2],
-    descricao: desc
-  }));
+  useEffect(() => {
+    const carregar = async () => {
+      const q = query(collection(db, 'eventos'), where('ano', '==', ano));
+      const snapshot = await getDocs(q);
+      const mapa = {};
+      snapshot.forEach((d) => {
+        const ev = d.data();
+        const chave = `${ev.ano}-${String(ev.mes).padStart(2, '0')}-${String(ev.dia).padStart(2, '0')}`;
+        mapa[chave] = mapa[chave] ? [...mapa[chave], ev.descricao] : [ev.descricao];
+      });
+      setEventos(mapa);
+    };
+    carregar();
+  }, [ano]);
+
+  const listaEventos = Object.entries(eventos)
+    .sort(([a], [b]) => (a > b ? 1 : -1))
+    .flatMap(([data, descs]) => descs.map((d) => ({ data, descricao: d })));
 
   return (
     <div className="impressao">
@@ -105,9 +112,15 @@ function Impressao() {
       </div>
       <div className="legenda-eventos">
         <ul>
-          {listaEventos.map((ev) => (
-            <li key={ev.dia}>
-              <span className="dia-legenda">{ev.dia}</span> - {ev.descricao}
+          {listaEventos.map((ev, idx) => (
+            <li key={`${ev.data}-${idx}`}>
+              <span className="dia-legenda">
+                {new Date(ev.data).toLocaleDateString('pt-BR', {
+                  day: '2-digit',
+                  month: '2-digit'
+                })}
+              </span>{' '}
+              - {ev.descricao}
             </li>
           ))}
         </ul>
