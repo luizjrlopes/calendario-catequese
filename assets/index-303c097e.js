@@ -2243,23 +2243,6 @@ Please change the parent <Route path="${y}"> to <Route path="${y==="/"?"*":`${y}
     }
   }
 `,Qx=xe.div`
-  width: 9.1cm;
-  min-height: 11.5cm;
-  background: #fff;
-  border-radius: 4px;
-  border: 1.5px solid #eee;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.3cm;
-  padding-bottom: 4px;
-  box-sizing: border-box;
-
-  @media print {
-    box-shadow: none;
-    border: 1px solid #d30000;
-    page-break-inside: avoid;
-  }
-`,Kx=xe.div`
   background: #d30000;
   color: #fff;
   font-size: 2.1rem;
@@ -2276,30 +2259,53 @@ Please change the parent <Route path="${y}"> to <Route path="${y==="/"?"*":`${y}
     font-weight: 400;
     opacity: 0.8;
   }
+`,Kx=xe.div`
+  width: 9.1cm;
+  min-height: 11.5cm;
+  background: #fff;
+  border-radius: 4px;
+  border: 1.5px solid #eee;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  margin-bottom: 0.3cm;
+  padding: 0; /* remove padding extra */
+  overflow: hidden; /* contém qualquer estouro */
+
+  @media print {
+    box-shadow: none;
+    border: 1px solid #d30000;
+    page-break-inside: avoid;
+  }
 `,Xx=xe.table`
   width: 100%;
   border-collapse: collapse;
   font-family: Arial, sans-serif;
-  margin: 0.2cm 0 0 0;
-
+  margin: 0.15cm 0 0 0; /* reduz margem superior */
+  table-layout: fixed; /* força colunas distribuídas sem overflow */
   th,
   td {
     width: 14.28%;
-    height: 1.1cm;
+    height: 1cm; /* reduz um pouco para caber melhor */
     text-align: center;
-    font-size: 1.13rem;
+    font-size: 1rem; /* escala ligeiramente menor para evitar estourar */
     font-weight: bold;
     border: 1px solid #ededed;
-    padding: 0;
+    padding: 2px; /* espaçamento interno mínimo */
     vertical-align: middle;
     box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
   }
 `,Yx=xe.th`
   background: ${({domingo:t})=>t?"#eee":"#999"};
   color: ${({domingo:t})=>t?"#d30000":"#fff"};
   font-weight: ${({domingo:t})=>t?"bold":"normal"};
-  font-size: 1.18rem;
-  padding: 2px;
+  font-size: 1.05rem; /* ligeiro ajuste para caber */
+  padding: 4px 2px;
+  box-sizing: border-box;
 `,Jx=xe.td`
   color: ${({domingo:t})=>t?"#d30000":"#222"};
   background: ${({evento:t})=>t?"#ffeaea":"#fff"};
@@ -2368,7 +2374,7 @@ Please change the parent <Route path="${y}"> to <Route path="${y==="/"?"*":`${y}
   .cresc {
     background: #fff;
   }
-`;var Ep=(t=>(t.NORTHERN="Northern",t.SOUTHERN="Southern",t))(Ep||{}),XE=(t=>(t.NEW="🌑",t.WAXING_CRESCENT="🌒",t.FIRST_QUARTER="🌓",t.WAXING_GIBBOUS="🌔",t.FULL="🌕",t.WANING_GIBBOUS="🌖",t.LAST_QUARTER="🌗",t.WANING_CRESCENT="🌘",t))(XE||{}),YE=(t=>(t.NEW="🌑",t.WAXING_CRESCENT="🌘",t.FIRST_QUARTER="🌗",t.WAXING_GIBBOUS="🌖",t.FULL="🌕",t.WANING_GIBBOUS="🌔",t.LAST_QUARTER="🌓",t.WANING_CRESCENT="🌒",t))(YE||{}),je=(t=>(t.NEW="New",t.WAXING_CRESCENT="Waxing Crescent",t.FIRST_QUARTER="First Quarter",t.WAXING_GIBBOUS="Waxing Gibbous",t.FULL="Full",t.WANING_GIBBOUS="Waning Gibbous",t.LAST_QUARTER="Last Quarter",t.WANING_CRESCENT="Waning Crescent",t))(je||{});const ov=24405875e-1,tN=2.4234366115277777e6,nN=27.55454988,Yc=29.53058770576;class Jc{static fromDate(e=new Date){return e.getTime()/864e5-e.getTimezoneOffset()/1440+ov}static toDate(e){const n=new Date;return n.setTime((e-ov+n.getTimezoneOffset()/1440)*864e5),n}}const Zc={hemisphere:Ep.NORTHERN},av=t=>(t-=Math.floor(t),t<0&&(t+=1),t);class An{static lunarAge(e=new Date){return An.lunarAgePercent(e)*Yc}static lunarAgePercent(e=new Date){return av((Jc.fromDate(e)-24515501e-1)/Yc)}static lunationNumber(e=new Date){return Math.round((Jc.fromDate(e)-tN)/Yc)+1}static lunarDistance(e=new Date){const n=Jc.fromDate(e),r=An.lunarAgePercent(e)*2*Math.PI,i=2*Math.PI*av((n-24515622e-1)/nN);return 60.4-3.3*Math.cos(i)-.6*Math.cos(2*r-i)-.5*Math.cos(2*r)}static lunarPhase(e=new Date,n){n={...Zc,...n};const r=An.lunarAge(e);return r<1.84566173161?je.NEW:r<5.53698519483?je.WAXING_CRESCENT:r<9.22830865805?je.FIRST_QUARTER:r<12.91963212127?je.WAXING_GIBBOUS:r<16.61095558449?je.FULL:r<20.30227904771?je.WANING_GIBBOUS:r<23.99360251093?je.LAST_QUARTER:r<27.68492597415?je.WANING_CRESCENT:je.NEW}static lunarPhaseEmoji(e=new Date,n){n={...Zc,...n};const r=An.lunarPhase(e);return An.emojiForLunarPhase(r,n)}static emojiForLunarPhase(e,n){const{hemisphere:r}={...Zc,...n};let i;switch(r===Ep.SOUTHERN?i=YE:i=XE,e){case je.WANING_CRESCENT:return i.WANING_CRESCENT;case je.LAST_QUARTER:return i.LAST_QUARTER;case je.WANING_GIBBOUS:return i.WANING_GIBBOUS;case je.FULL:return i.FULL;case je.WAXING_GIBBOUS:return i.WAXING_GIBBOUS;case je.FIRST_QUARTER:return i.FIRST_QUARTER;case je.WAXING_CRESCENT:return i.WAXING_CRESCENT;default:case je.NEW:return i.NEW}}static isWaxing(e=new Date){return An.lunarAge(e)<=14.765}static isWaning(e=new Date){return An.lunarAge(e)>14.765}}const JE={NOVA:"🌑",CRESC:"🌓",CHEIA:"🌕",MING:"🌗"},rN=["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"],iN=["D","S","T","Q","Q","S","S"];function sN(t,e){const n=["CRESC","CHEIA","MING","NOVA"],r={},i=new Date(t,e+1,0).getDate();for(let s=1;s<=i;s++){const o=new Date(t,e,s),l=An.lunarPhase(o);let u=null;if(l==="First Quarter"?u="CRESC":l==="Full"?u="CHEIA":l==="Last Quarter"?u="MING":l==="New"&&(u="NOVA"),u&&!r[u]&&(r[u]={nome:u,simbolo:JE[u],dia:String(s).padStart(2,"0")}),Object.keys(r).length===4)break}return n.map(s=>r[s]).filter(Boolean)}function oN(t,e){const n=new Date(t,e+1,0).getDate(),r=new Date(t,e,1).getDay(),i=[];let s=new Array(r).fill(null);for(let o=1;o<=n;o++)s.push(o),s.length===7&&(i.push(s),s=[]);if(s.length>0){for(;s.length<7;)s.push(null);i.push(s)}return i}function aN(){const[e,n]=O.useState({});O.useEffect(()=>{(async()=>{const l=rE(Zd(ro,"eventos"),vf("ano","==",2025)),u=await sE(l),c={};u.forEach(d=>{const p=d.data();c[p.mes]||(c[p.mes]={}),c[p.mes][p.dia]||(c[p.mes][p.dia]=[]),c[p.mes][p.dia].push(p)}),n(c)})()},[2025]);const r=o=>{if(!e[o+1])return[];const l=[];return Object.keys(e[o+1]).sort((u,c)=>Number(u)-Number(c)).forEach(u=>{e[o+1][u].forEach(c=>{l.push({dia:u,desc:c.descricao})})}),l},i=3,s=[];for(let o=0;o<12;o+=i)s.push([o,o+1,o+2].filter(l=>l<12));return W.jsx(qx,{children:s.map((o,l)=>W.jsx(Gx,{children:o.map(u=>W.jsxs(Qx,{children:[W.jsxs(Kx,{children:[W.jsx("span",{children:rN[u]}),W.jsx("span",{className:"year",children:2025})]}),W.jsxs(Xx,{children:[W.jsx("thead",{children:W.jsx("tr",{children:iN.map((c,d)=>W.jsx(Yx,{domingo:d===0,children:c},c))})}),W.jsx("tbody",{children:oN(2025,u).map((c,d)=>W.jsx("tr",{children:c.map((p,m)=>{const I=m===0,R=p&&e[u+1]&&e[u+1][p];return W.jsx(Jx,{domingo:I,evento:!!R,children:p&&W.jsx("span",{className:I?"vermelho":"",children:W.jsx("b",{children:p})})},m)})},d))})]}),W.jsx(Zx,{children:W.jsx("ul",{children:r(u).map((c,d)=>W.jsxs("li",{children:[W.jsxs("span",{className:"event-date",children:[String(c.dia).padStart(2,"0"),"/",String(u+1).padStart(2,"0")]})," – ",c.desc]},d))})}),W.jsx(eN,{children:sN(2025,u).map((c,d)=>W.jsxs("span",{className:"fase",children:[W.jsx("span",{children:JE[c.nome]}),c.dia," ",c.nome]},d))})]},u))},l))})}const lN=ok`
+`;var Ep=(t=>(t.NORTHERN="Northern",t.SOUTHERN="Southern",t))(Ep||{}),XE=(t=>(t.NEW="🌑",t.WAXING_CRESCENT="🌒",t.FIRST_QUARTER="🌓",t.WAXING_GIBBOUS="🌔",t.FULL="🌕",t.WANING_GIBBOUS="🌖",t.LAST_QUARTER="🌗",t.WANING_CRESCENT="🌘",t))(XE||{}),YE=(t=>(t.NEW="🌑",t.WAXING_CRESCENT="🌘",t.FIRST_QUARTER="🌗",t.WAXING_GIBBOUS="🌖",t.FULL="🌕",t.WANING_GIBBOUS="🌔",t.LAST_QUARTER="🌓",t.WANING_CRESCENT="🌒",t))(YE||{}),je=(t=>(t.NEW="New",t.WAXING_CRESCENT="Waxing Crescent",t.FIRST_QUARTER="First Quarter",t.WAXING_GIBBOUS="Waxing Gibbous",t.FULL="Full",t.WANING_GIBBOUS="Waning Gibbous",t.LAST_QUARTER="Last Quarter",t.WANING_CRESCENT="Waning Crescent",t))(je||{});const ov=24405875e-1,tN=2.4234366115277777e6,nN=27.55454988,Yc=29.53058770576;class Jc{static fromDate(e=new Date){return e.getTime()/864e5-e.getTimezoneOffset()/1440+ov}static toDate(e){const n=new Date;return n.setTime((e-ov+n.getTimezoneOffset()/1440)*864e5),n}}const Zc={hemisphere:Ep.NORTHERN},av=t=>(t-=Math.floor(t),t<0&&(t+=1),t);class An{static lunarAge(e=new Date){return An.lunarAgePercent(e)*Yc}static lunarAgePercent(e=new Date){return av((Jc.fromDate(e)-24515501e-1)/Yc)}static lunationNumber(e=new Date){return Math.round((Jc.fromDate(e)-tN)/Yc)+1}static lunarDistance(e=new Date){const n=Jc.fromDate(e),r=An.lunarAgePercent(e)*2*Math.PI,i=2*Math.PI*av((n-24515622e-1)/nN);return 60.4-3.3*Math.cos(i)-.6*Math.cos(2*r-i)-.5*Math.cos(2*r)}static lunarPhase(e=new Date,n){n={...Zc,...n};const r=An.lunarAge(e);return r<1.84566173161?je.NEW:r<5.53698519483?je.WAXING_CRESCENT:r<9.22830865805?je.FIRST_QUARTER:r<12.91963212127?je.WAXING_GIBBOUS:r<16.61095558449?je.FULL:r<20.30227904771?je.WANING_GIBBOUS:r<23.99360251093?je.LAST_QUARTER:r<27.68492597415?je.WANING_CRESCENT:je.NEW}static lunarPhaseEmoji(e=new Date,n){n={...Zc,...n};const r=An.lunarPhase(e);return An.emojiForLunarPhase(r,n)}static emojiForLunarPhase(e,n){const{hemisphere:r}={...Zc,...n};let i;switch(r===Ep.SOUTHERN?i=YE:i=XE,e){case je.WANING_CRESCENT:return i.WANING_CRESCENT;case je.LAST_QUARTER:return i.LAST_QUARTER;case je.WANING_GIBBOUS:return i.WANING_GIBBOUS;case je.FULL:return i.FULL;case je.WAXING_GIBBOUS:return i.WAXING_GIBBOUS;case je.FIRST_QUARTER:return i.FIRST_QUARTER;case je.WAXING_CRESCENT:return i.WAXING_CRESCENT;default:case je.NEW:return i.NEW}}static isWaxing(e=new Date){return An.lunarAge(e)<=14.765}static isWaning(e=new Date){return An.lunarAge(e)>14.765}}const JE={NOVA:"🌑",CRESC:"🌓",CHEIA:"🌕",MING:"🌗"},rN=["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"],iN=["D","S","T","Q","Q","S","S"];function sN(t,e){const n=["CRESC","CHEIA","MING","NOVA"],r={},i=new Date(t,e+1,0).getDate();for(let s=1;s<=i;s++){const o=new Date(t,e,s),l=An.lunarPhase(o);let u=null;if(l==="First Quarter"?u="CRESC":l==="Full"?u="CHEIA":l==="Last Quarter"?u="MING":l==="New"&&(u="NOVA"),u&&!r[u]&&(r[u]={nome:u,simbolo:JE[u],dia:String(s).padStart(2,"0")}),Object.keys(r).length===4)break}return n.map(s=>r[s]).filter(Boolean)}function oN(t,e){const n=new Date(t,e+1,0).getDate(),r=new Date(t,e,1).getDay(),i=[];let s=new Array(r).fill(null);for(let o=1;o<=n;o++)s.push(o),s.length===7&&(i.push(s),s=[]);if(s.length>0){for(;s.length<7;)s.push(null);i.push(s)}return i}function aN(){const[e,n]=O.useState({});O.useEffect(()=>{(async()=>{const l=rE(Zd(ro,"eventos"),vf("ano","==",2025)),u=await sE(l),c={};u.forEach(d=>{const p=d.data();c[p.mes]||(c[p.mes]={}),c[p.mes][p.dia]||(c[p.mes][p.dia]=[]),c[p.mes][p.dia].push(p)}),n(c)})()},[2025]);const r=o=>{if(!e[o+1])return[];const l=[];return Object.keys(e[o+1]).sort((u,c)=>Number(u)-Number(c)).forEach(u=>{e[o+1][u].forEach(c=>{l.push({dia:u,desc:c.descricao})})}),l},i=3,s=[];for(let o=0;o<12;o+=i)s.push([o,o+1,o+2].filter(l=>l<12));return W.jsx(qx,{children:s.map((o,l)=>W.jsx(Gx,{children:o.map(u=>W.jsxs(Kx,{children:[W.jsxs(Qx,{children:[W.jsx("span",{children:rN[u]}),W.jsx("span",{className:"year",children:2025})]}),W.jsxs(Xx,{children:[W.jsx("thead",{children:W.jsx("tr",{children:iN.map((c,d)=>W.jsx(Yx,{domingo:d===0,children:c},c))})}),W.jsx("tbody",{children:oN(2025,u).map((c,d)=>W.jsx("tr",{children:c.map((p,m)=>{const I=m===0,R=p&&e[u+1]&&e[u+1][p];return W.jsx(Jx,{domingo:I,evento:!!R,children:p&&W.jsx("span",{className:I?"vermelho":"",children:W.jsx("b",{children:p})})},m)})},d))})]}),W.jsx(Zx,{children:W.jsx("ul",{children:r(u).map((c,d)=>W.jsxs("li",{children:[W.jsxs("span",{className:"event-date",children:[String(c.dia).padStart(2,"0"),"/",String(u+1).padStart(2,"0")]})," – ",c.desc]},d))})}),W.jsx(eN,{children:sN(2025,u).map((c,d)=>W.jsxs("span",{className:"fase",children:[W.jsx("span",{children:JE[c.nome]}),c.dia," ",c.nome]},d))})]},u))},l))})}const lN=ok`
   body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -2378,10 +2384,7 @@ Please change the parent <Route path="${y}"> to <Route path="${y==="/"?"*":`${y}
   }
 
   // Impede o Chrome/Safari de remover o fundo na impressão
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+
 
   @media print {
    * {
